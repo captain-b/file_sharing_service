@@ -1,0 +1,157 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+  <!-- Page Heading -->
+  <h1 class="h3 mb-4 text-gray-800">Shared Files</h1>
+  <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <div style="display: inline-block;">
+            <a id="back_button" style="display: inline-block; margin-right: 20px;" href="#" class="btn btn-secondary btn-icon-split" onclick="goBack()">
+              <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+              </span>
+              <span class="text">Go Back</span>
+            </a>
+          </div>
+          <div style="display: inline-block;right: 0;position: absolute;">
+            <label id="create_folder_button" style="display: inline-block; margin-right: 20px;" onclick="createFolder();" class="btn btn-success btn-icon-split">
+              <span class="icon text-white-50">
+                <i class="fas fa-folder-plus"></i>
+              </span>
+              <span class="text"> Create Folder</span>
+            </label>
+            <label for="upload_input" id="create_folder" style="display: inline-block; margin-right: 20px;" class="btn btn-primary btn-icon-split">
+              <span class="icon text-white-50">
+                <i class="fas fa-upload"></i>
+              </span>
+              <span class="text">Upload File</span>
+            </label>
+            <input type="file" name="files[]" id="upload_input" style="opacity: 0;position: absolute;z-index: -1;" onchange="uploadFile();" multiple/>
+          </div>
+        </div>
+        <div class="card-header py-3">
+          <h6 style="display: inline-block;" id="path_title" class="m-0 font-weight-bold text-primary">Files</h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+
+            {{#each sharedDirectories}}
+            <div class="col-lg-4 mb-4">
+              <a href="{{ this.path }}/{{ this.name }}" style="text-decoration:none;">
+              {{#if this.dir}}
+                <div class="card bg-primary text-white shadow">
+              {{else}}
+                <div class="card bg-success text-white shadow">
+              {{/if}}
+                  <div class="card-body">
+                    {{#if this.dir}}
+                      <i class="fas fa-fw fa-folder"></i>
+                    {{/if}}
+                      {{ this.name }}
+                    {{#if this.dir}}
+                      <div class="text-white-50 small">Directory</div>
+                    {{else}}
+                      <div class="text-white-50 small">{{ this.fileSize }}</div>
+                    {{/if}}
+                  </div>
+                </div>
+              </div>
+              {{/each}}
+              </a>
+          </div>
+        </div>
+      </div>
+
+</div>
+
+<script type="text/javascript">
+
+  function goBack() {
+    var dirs = window.location.pathname.split('/');
+    
+    dirs.shift();
+    if (dirs[dirs.length - 1] === '')
+      dirs.pop();
+    dirs.pop();
+
+    dirs = dirs.join('/')
+    window.location.href = `/${dirs}`;
+  }
+
+
+  document.getElementById('upload_input').onchange = function(event) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", window.location.pathname, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    var reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]);
+    reader.onload = function () {
+     xhr.send(JSON.stringify({
+          file: reader.result,
+          file_name: event.target.files[0].name,
+          mkdir: false
+      }));
+    };
+    reader.onerror = function (error) {
+     alert('There was a problem opening this file.');
+    };
+
+    xhr.onreadystatechange = function () {
+        if (this.readyState != 4) return;
+
+        if (this.status == 200) {
+            
+          alert('File uploaded.');
+
+            window.location.href = this.responseText;
+        } else {
+          alert(this.responseText);
+        }
+    };
+  }
+
+  function createFolder() {
+    const folderName = prompt('Enter the new folder\'s name:');
+    
+    if (folderName === null)
+      return
+
+    if (folderName === '') {
+      alert('Please give this folder a name.');
+      return createFolder();
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", window.location.pathname, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({
+        folder_name: folderName,
+        mkdir: true
+    }));
+
+    xhr.onreadystatechange = function () {
+        if (this.readyState != 4) return;
+
+        if (this.status == 200) {
+            
+            alert('New folder created.');
+            window.location.href = this.responseText;
+        } else {
+          alert(this.responseText);
+        }
+    };
+  }
+
+  if (window.location.pathname !== '/home/shared_files') {
+    var path = window.location.pathname.split('/');
+
+    path = path.join(' > ');
+    path = path.replace(/%20/g, ' ');
+
+    document.getElementById('path_title').innerHTML = path;
+  } else {
+    document.getElementById('back_button').style.display = 'none';
+  }
+
+</script>

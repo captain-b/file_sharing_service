@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "allowJs": true,
+        "target": "es2019",
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "inlineSourceMap": true
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}
