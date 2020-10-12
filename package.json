@@ -7,10 +7,9 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",
-    "crypto-js": "^4.0.0",
     "express": "^4.17.1",
     "express-handlebars": "^5.1.0",
-    "twilio": "^3.49.0"
+    "parse-server": "^4.3.0"
   },
   "scripts": {
     "build": "tsc",
@@ -21,6 +20,7 @@
     "node": ">=4.3"
   },
   "devDependencies": {
+    "parse-dashboard": "^2.1.0",
     "ts-node-dev": "^1.0.0-pre.58",
     "typescript": "^3.9.7"
   }
