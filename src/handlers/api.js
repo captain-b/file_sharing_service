@@ -1,15 +1,18 @@
 const fs = require('fs').promises;
 const fsSync = require('fs');
+const Parse = require('parse/node');
 
-import User from '../utils/users';
+const userClass = Parse.Object.extend('_User');
+
+// import User from '../utils/users';
 import SharedFiles from '../utils/fileHandler';
 
 export const Login = async function (req, res) {
     try {
-    	const token = await User.login(req.body.username, req.body.password);
-
-		res.cookie('token', `Bearer ${token}`).send('/home/shared_files');
+    	const user = await Parse.User.logIn(req.body.username, req.body.password);
+		res.cookie('token', `Bearer ${user.attributes.sessionToken}`).send('/home/shared_files');
 	} catch(error) {
+		console.log(error);
 		res.status(401).send('Authentication failed.');
 	}
 };
