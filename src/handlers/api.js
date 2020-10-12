@@ -90,9 +90,23 @@ export const HandleSharedFiles = async function(req, res) {
 			res.status(400).send(error.message);
 		}
 	} else {
+		const file = new Parse.File(req.body.file_name, { base64: req.body.file });
+		const files = new Parse.Object('Files');
+
+		const ACL = new Parse.ACL();
+
+        ACL.setPublicReadAccess(false);
+        ACL.setPublicWriteAccess(false);
+        ACL.setRoleWriteAccess('admin', true);
+        ACL.setRoleReadAccess('admin', true);
+        ACL.setRoleWriteAccess(req.user.attributes.objectId, true);
+        ACL.setRoleReadAccess(req.user.attributes.objectId, true);
+        files.set('dir', req.originalUrl.split('/').splice(3).join('/') === '' ? '/' : req.originalUrl.split('/').splice(3).join('/'));
+        files.set('file', file);
+        files.setACL(ACL);
+
 		try {
-			const path = decodeURI(`${process.env.SHARED_DIR}/${req.originalUrl.split('/').splice(3).join('/')}/${req.body.file_name}`);
-			await SharedFiles.uploadFiles([{path: path, file: req.body.file}]);
+			await files.save(null, {sessionToken: req.user.sessionToken});
 			res.send();
 		} catch (error) {
 			res.status(400).send(error.message);
