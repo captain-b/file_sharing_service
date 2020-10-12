@@ -2,7 +2,6 @@ const userClass = Parse.Object.extend('_User');
 
 export const AuthMiddleware = async function(req, res, next) {
     // Require authentication for all other directories except '/'.
-    console.log(req.originalUrl);
     if (req.originalUrl === '/favicon.ico' || req.originalUrl === '/' || req.originalUrl.startsWith('/parse') || req.originalUrl.startsWith('/admin/dashboard')) {
         return next();
     }
