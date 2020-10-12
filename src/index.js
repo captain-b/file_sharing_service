@@ -34,7 +34,7 @@ RegisterPublicRoutes(app);
 RegisterParseDashboard(app);
 
 // Register our middleware.
-// app.use(AuthMiddleware);
+app.use(AuthMiddleware);
 
 // Register all our routes.
 RegisterAPIRoutes(app);
