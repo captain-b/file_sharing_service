@@ -94,13 +94,12 @@ export const HandleSharedFiles = async function(req, res) {
 		const files = new Parse.Object('Files');
 
 		const ACL = new Parse.ACL();
-
         ACL.setPublicReadAccess(false);
         ACL.setPublicWriteAccess(false);
         ACL.setRoleWriteAccess('admin', true);
         ACL.setRoleReadAccess('admin', true);
-        ACL.setRoleWriteAccess(req.user.attributes.objectId, true);
-        ACL.setRoleReadAccess(req.user.attributes.objectId, true);
+        ACL.setRoleWriteAccess(req.user.id, true);
+        ACL.setRoleReadAccess(req.user.id, true);
         files.set('dir', req.originalUrl.split('/').splice(3).join('/') === '' ? '/' : req.originalUrl.split('/').splice(3).join('/'));
         files.set('file', file);
         files.setACL(ACL);
