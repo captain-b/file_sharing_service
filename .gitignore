@@ -1,4 +1,4 @@
-start_server.sh
+*.sh
 
 /dist
 /node_modules
