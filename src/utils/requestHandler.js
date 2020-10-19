@@ -33,7 +33,8 @@ export const AuthMiddleware = async function(req, res, next) {
     }
 
     // Set our current user
-    req.user = user.attributes;
+    const attributes = user.attributes;
+    req.user = {id: user.id, attributes};
 
     // We gucci!
     return next();
